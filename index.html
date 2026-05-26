@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRIME CANVAS | Haute Couture</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&family=Inter:wght@200;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="custom-cursor"></div>
+
+    <header class="luxury-nav">
+        <div class="nav-container">
+            <a href="#" class="brand-logo" id="editable-logo">PRIME CANVAS</a>
+            <nav class="nav-links">
+                <div class="dropdown">
+                    <a href="#collection" class="nav-item">The Collections</a>
+                    <div class="dropdown-content">
+                        <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank">T-shirt</a>
+                        <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank">Hoodie & Jacket</a>
+                        <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank">AOP Apparels</a>
+                        <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank">Bottom wear</a>
+                        <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank">Kids clothing</a>
+                        <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank">Headwear</a>
+                        <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank">Drinkware</a>
+                        <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank">Accessories</a>
+                    </div>
+                </div>
+                <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank" class="nav-item insta-link">Instagram Studio</a>
+                <button id="login-trigger" class="admin-btn-toggle">Sign In</button>
+            </nav>
+        </div>
+    </header>
+
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal" id="close-login">&times;</span>
+            <h2 class="modal-title">Sign In / Sign Up</h2>
+            <div class="input-group">
+                <label for="user-email">Email Address</label>
+                <input type="text" id="user-email" placeholder="example@gmail.com">
+            </div>
+            <div class="input-group">
+                <label for="user-phone">Phone Number</label>
+                <input type="text" id="user-phone" placeholder="10 Digit Mobile Number">
+            </div>
+            <button id="submit-login" class="submit-luxury-btn">Sign In</button>
+        </div>
+    </div>
+
+    <section class="hero-section">
+        <div class="hero-parallax-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content reveal-element">
+            <span class="hero-subtitle" id="editable-subtitle">ARCHITECTURAL SILHOUETTES</span>
+            <h1 class="hero-title" id="editable-title">The Art of <br>Modern Dressing</h1>
+            <a href="#collection" class="action-scroll-btn">Explore Lookbook</a>
+        </div>
+    </section>
+
+    <main id="collection" class="collection-container">
+        <div class="section-meta reveal-element">
+            <h2 id="editable-section-title">Current Lookbook</h2>
+            <p class="meta-filter">Showing All Structural Apparel</p>
+        </div>
+
+        <div id="product-grid" class="product-grid"></div>
+    </main>
+
+    <div id="admin-panel" class="admin-panel hidden">
+        <div class="admin-panel-content">
+            <div class="panel-header">
+                <h3>Curator Dashboard</h3>
+                <button id="close-admin" class="close-btn">&times;</button>
+            </div>
+            
+            <div class="admin-section">
+                <h4>Logged In Customers</h4>
+                <div id="customer-list" class="customer-list-box"></div>
+            </div>
+
+            <div class="admin-section">
+                <h4>Add New Design</h4>
+                <form id="add-product-form">
+                    <div class="input-group">
+                        <label for="item-image">Visual Image Source URL</label>
+                        <input type="url" id="item-image" required placeholder="Paste beautiful image address link">
+                    </div>
+                    <button type="submit" class="submit-luxury-btn">Publish Piece to Grid</button>
+                </form>
+            </div>
+
+            <div class="admin-section">
+                <h4>Edit Website Texts</h4>
+                <div class="input-group">
+                    <label>Brand Name</label>
+                    <input type="text" id="edit-brand-name" placeholder="Update Brand Name">
+                </div>
+                <div class="input-group">
+                    <label>Hero Title</label>
+                    <input type="text" id="edit-hero-title" placeholder="Update Main Title">
+                </div>
+                <button id="save-texts" class="submit-luxury-btn" style="margin-top: 10px;">Save Texts</button>
+            </div>
+
+            <button id="logout-admin" class="logout-btn">Lock Dashboard</button>
+        </div>
+    </div>
+
+    <footer class="luxury-footer">
+        <div class="footer-wrap">
+            <a href="https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==" target="_blank" class="instagram-footer-trigger">
+                <span>Connect to Instagram to Order & Transact</span>
+                <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+            </a>
+            <div class="footer-base">
+                <p>&copy; 2026 PRIME CANVAS. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
