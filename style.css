@@ -115,3 +115,125 @@ html { scroll-behavior: smooth; background-color: var(--color-bg-deep); color: v
 .arrow-icon { width: 32px; height: 32px; transition: transform 0.4s; }
 .instagram-footer-trigger:hover .arrow-icon { transform: translateX(10px); }
 .footer-base { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.2); }
+/* =======================================================
+   MOBILE & TABLET RESPONSIVE STYLES 
+   (നിങ്ങളുടെ style.css ഫയലിന്റെ ഏറ്റവും ഒടുവിൽ ഇത് പേസ്റ്റ് ചെയ്യുക)
+   ======================================================= */
+
+@media (max-width: 1024px) {
+    .nav-container {
+        padding: 1.5rem 2rem;
+    }
+    .nav-links {
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    /* മൊബൈലിൽ മൗസ് പോയിന്റർ ഇല്ലാത്തതിനാൽ കസ്റ്റം കർസർ ഒഴിവാക്കുന്നു */
+    .custom-cursor {
+        display: none !important;
+    }
+
+    /* ഹെഡർ മെനു ക്രമീകരണങ്ങൾ */
+    .nav-container {
+        padding: 1rem 1.5rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .nav-links {
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .brand-logo {
+        font-size: 1.4rem;
+        letter-spacing: 2px;
+    }
+    .nav-item {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+    .dropdown-content {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 200px;
+    }
+
+    /* ഹീറോ സെക്ഷൻ മൊബൈൽ സൈസ് */
+    .hero-section {
+        padding-left: 5%;
+        padding-right: 5%;
+        justify-content: center;
+        text-align: center;
+    }
+    .hero-content {
+        max-width: 100%;
+    }
+    .hero-title {
+        font-size: 2.3rem; /* മൊബൈലിന് അനുയോജ്യമായ സൈസ് */
+        line-height: 1.2;
+        margin-bottom: 1.8rem;
+    }
+    .hero-subtitle {
+        font-size: 0.7rem;
+        letter-spacing: 3px;
+    }
+
+    /* പ്രൊഡക്റ്റ് ഗ്രിഡ് മൊബൈൽ ക്രമീകരണം (ഇമേജുകൾ കൃത്യമായി കാണിക്കും) */
+    .collection-container {
+        padding: 4rem 1.5rem;
+    }
+    .section-meta h2 {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+    .meta-filter {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .product-grid {
+        /* മൊബൈൽ ഫോണിൽ ഇമേജുകൾ സ്ക്രീൻ വിട്ട് പുറത്തുപോകാതിരിക്കാൻ ഇത് സഹായിക്കും */
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+        gap: 2.5rem 1.5rem;
+    }
+    .insta-transaction-trigger {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.7rem;
+        width: 90%;
+        text-align: center;
+    }
+
+    /* ലോഗിൻ ബോക്സ് മൊബൈൽ സൈസ് */
+    .modal-content {
+        width: 90%;
+        padding: 2rem 1.5rem;
+    }
+    .modal-title {
+        font-size: 1.6rem;
+    }
+
+    /* അഡ്മിൻ പാനൽ മൊബൈൽ സൈസ് */
+    .admin-panel {
+        width: 100%; /* മൊബൈലിൽ ഫുൾ സ്ക്രീൻ ആയി കാണിക്കും */
+        padding: 2rem 1.5rem;
+    }
+    .panel-header h3 {
+        font-size: 1.5rem;
+    }
+
+    /* ഫൂട്ടർ ക്രമീകരണങ്ങൾ */
+    .luxury-footer {
+        padding: 4rem 1.5rem 2rem 1.5rem;
+    }
+    .instagram-footer-trigger {
+        font-size: 1.3rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .arrow-icon {
+        width: 24px;
+        height: 24px;
+    }
+}
