@@ -5,7 +5,6 @@ const OWNER_SECRET = "primecanva@123";
 const defaultCollection = [
     { id: 1, image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1920&auto=format&fit=crop" },
     { id: 2, image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1920&auto=format&fit=crop" },
-    { id: 3, image: "https://images.unsplash.com/photo-1550614000-4b95d4ebfa48?q=80&w=1920&auto=format&fit=crop" }
 ];
 
 let collectionInventory = JSON.parse(localStorage.getItem('prime_canvas_inventory')) || defaultCollection;
