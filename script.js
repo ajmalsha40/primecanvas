@@ -165,14 +165,7 @@ function renderProductGrid() {
             ? `<button class="delete-piece-btn" onclick="removeGarmentPiece(${item.id})">Remove</button>` 
             : '';
 
-        structuralCard.innerHTML = `
-            ${ownerControls}
-            <div class="product-image-wrapper">
-                <img src="${item.image}" alt="Fashion Silhouette" class="product-image" loading="lazy">
-                <div class="product-card-overlay">
-                    <a href="${INSTAGRAM_TARGET_URL}" target="_blank" class="insta-transaction-trigger">Connect to Instagram to Order</a>
-                </div>
-            </div>
+        
         `;
         gridTarget.appendChild(structuralCard);
     });
