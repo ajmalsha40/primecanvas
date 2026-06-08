@@ -1,113 +1,156 @@
-// Global App Direct Target Link config
 const INSTAGRAM_TARGET_URL = "https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==";
+const OWNER_SECRET = "primecanva@123";
 
-// Mock Authentication Master Pin for Owner Management Dashboard Access
-const OWNER_SECURITY_KEY = "PRIME2026"; 
-
-// Base Mock Inventory Array to protect design structure if local state is empty
+// High quality Copyright-Free Initial Images
 const defaultCollection = [
-    { id: 1, title: "Minimalist Silk Column Gown", price: "$1,850 USD", image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1983&auto=format&fit=crop" },
-    { id: 2, title: "Structured Asymmetric Blazer Dress", price: "$1,400 USD", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1920&auto=format&fit=crop" },
-    { id: 3, title: "Pleated Organza Cocktail Piece", price: "$2,100 USD", image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1974&auto=format&fit=crop" }
+    { id: 1, image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1920&auto=format&fit=crop" },
+    { id: 2, image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1920&auto=format&fit=crop" },
+    { id: 3, image: "https://images.unsplash.com/photo-1550614000-4b95d4ebfa48?q=80&w=1920&auto=format&fit=crop" }
 ];
 
 let collectionInventory = JSON.parse(localStorage.getItem('prime_canvas_inventory')) || defaultCollection;
+let customerList = JSON.parse(localStorage.getItem('prime_canvas_customers')) || [];
 let isOwnerSessionActive = sessionStorage.getItem('owner_logged_in') === 'true';
 
 document.addEventListener("DOMContentLoaded", () => {
     initAppEffects();
     renderProductGrid();
+    renderCustomerList();
 });
 
-// Initialization of High-End UI FX Elements
 function initAppEffects() {
-    // 1. Premium Micro-Interaction Custom Cursor Mapping
+    // Cursor FX
     const cursor = document.querySelector('.custom-cursor');
     document.addEventListener('mousemove', (e) => {
-        cursor.style.left = `${e.clientX}px`;
-        cursor.style.top = `${e.clientY}px`;
+        cursor.style.left = `${e.clientX}px`; cursor.style.top = `${e.clientY}px`;
     });
-
-    // Cursor scaling expansion when navigating over interactable zones
     document.querySelectorAll('a, button, .product-card').forEach(item => {
         item.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%, -50%) scale(2.5)'; cursor.style.background = 'rgba(197, 168, 128, 0.3)'; });
         item.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%, -50%) scale(1)'; cursor.style.background = '#C5A880'; });
     });
 
-    // 2. Immersive Parallax Scroll Performance Capture
+    // Parallax
     const parallaxBg = document.querySelector('.hero-parallax-bg');
     window.addEventListener('scroll', () => {
-        let scrollOffset = window.pageYOffset;
-        // Adjust background pacing relative to page movement ticks
-        if(parallaxBg) {
-            parallaxBg.style.transform = `translateY(${scrollOffset * 0.4}px)`;
-        }
+        if(parallaxBg) parallaxBg.style.transform = `translateY(${window.pageYOffset * 0.4}px)`;
     });
 
-    // 3. Intersection Observer for Cinematic Component Animations
+    // Scroll Reveal
     const scrollRevealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if(entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
-        });
+        entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('active'); });
     }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal-element').forEach(el => scrollRevealObserver.observe(el));
 
-    document.querySelectorAll('.reveal-element, .section-meta').forEach(el => {
-        el.classList.add('reveal-element');
-        scrollRevealObserver.observe(el);
-    });
-
-    // 4. Secure Admin Console UI Interface Toggles
-    const adminTrigger = document.getElementById('admin-trigger');
+    // Sign In Logic
+    const loginTrigger = document.getElementById('login-trigger');
+    const loginModal = document.getElementById('login-modal');
+    const closeLogin = document.getElementById('close-login');
+    const submitLogin = document.getElementById('submit-login');
+    const emailInput = document.getElementById('user-email');
+    const phoneInput = document.getElementById('user-phone');
+    
+    // Admin Panel Elements
     const adminPanel = document.getElementById('admin-panel');
     const closeAdmin = document.getElementById('close-admin');
     const logoutAdmin = document.getElementById('logout-admin');
-    const addForm = document.getElementById('add-product-form');
 
-    adminTrigger.addEventListener('click', () => {
-        if (!isOwnerSessionActive) {
-            let verificationPrompt = prompt("Provide Owner Security Validation Key:");
-            if(verificationPrompt === OWNER_SECURITY_KEY) {
-                isOwnerSessionActive = true;
-                sessionStorage.setItem('owner_logged_in', 'true');
-                renderProductGrid(); 
-                adminPanel.classList.remove('hidden');
-            } else if (verificationPrompt !== null) {
-                alert("Access Transmission Interrupted: Invalid Security Key.");
-            }
-        } else {
+    loginTrigger.addEventListener('click', () => {
+        if(isOwnerSessionActive) {
             adminPanel.classList.remove('hidden');
+        } else {
+            loginModal.classList.remove('hidden');
         }
     });
 
+    closeLogin.addEventListener('click', () => loginModal.classList.add('hidden'));
     closeAdmin.addEventListener('click', () => adminPanel.classList.add('hidden'));
-    
+
+    submitLogin.addEventListener('click', () => {
+        const email = emailInput.value.trim();
+        const phone = phoneInput.value.trim();
+
+        // 1. Check Owner Condition Exact Match
+        if(email === OWNER_SECRET && phone === OWNER_SECRET) {
+            isOwnerSessionActive = true;
+            sessionStorage.setItem('owner_logged_in', 'true');
+            loginModal.classList.add('hidden');
+            adminPanel.classList.remove('hidden');
+            renderProductGrid();
+            emailInput.value = ""; phoneInput.value = "";
+            return;
+        }
+
+        // 2. Customer Condition Validations
+        if(!email.endsWith("@gmail.com")) {
+            alert("Email must end with @gmail.com");
+            return;
+        }
+        
+        // 10 digits validation
+        if(phone.length !== 10 || isNaN(phone)) {
+            alert("Phone number must be exactly 10 digits.");
+            return;
+        }
+
+        // Save Customer
+        customerList.push(`Email: ${email} | Phone: ${phone}`);
+        localStorage.setItem('prime_canvas_customers', JSON.stringify(customerList));
+        renderCustomerList();
+        
+        alert("Signed in Successfully! Enjoy browsing.");
+        loginModal.classList.add('hidden');
+        emailInput.value = ""; phoneInput.value = "";
+    });
+
     logoutAdmin.addEventListener('click', () => {
         isOwnerSessionActive = false;
         sessionStorage.setItem('owner_logged_in', 'false');
         adminPanel.classList.add('hidden');
         renderProductGrid();
-        alert("Session Protected. Owner Admin Panel Locked.");
+        alert("Admin Locked. Logged out securely.");
     });
 
-    // Append Piece Action Pipeline via Client Portal
+    // Owner Functions: Add New Image
+    const addForm = document.getElementById('add-product-form');
     addForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const newPiece = {
-            id: Date.now(),
-            title: document.getElementById('item-title').value,
-            price: document.getElementById('item-price').value,
-            image: document.getElementById('item-image').value
-        };
+        const newPiece = { id: Date.now(), image: document.getElementById('item-image').value };
         collectionInventory.push(newPiece);
         updateLocalStorageEngine();
         addForm.reset();
-        adminPanel.classList.add('hidden');
     });
+
+    // Owner Functions: Edit Texts
+    document.getElementById('save-texts').addEventListener('click', () => {
+        const newBrand = document.getElementById('edit-brand-name').value;
+        const newTitle = document.getElementById('edit-hero-title').value;
+        
+        if(newBrand) {
+            document.getElementById('editable-logo').innerText = newBrand;
+            localStorage.setItem('savedBrand', newBrand);
+        }
+        if(newTitle) {
+            document.getElementById('editable-title').innerHTML = newTitle;
+            localStorage.setItem('savedTitle', newTitle);
+        }
+        alert("Texts Updated on Website!");
+    });
+
+    // Load saved texts if they exist
+    if(localStorage.getItem('savedBrand')) document.getElementById('editable-logo').innerText = localStorage.getItem('savedBrand');
+    if(localStorage.getItem('savedTitle')) document.getElementById('editable-title').innerHTML = localStorage.getItem('savedTitle');
 }
 
-// Render Engine for Dynamic Product Architecture
+function renderCustomerList() {
+    const listDiv = document.getElementById('customer-list');
+    if(!listDiv) return;
+    if(customerList.length === 0) {
+        listDiv.innerHTML = "No customers logged in yet.";
+    } else {
+        listDiv.innerHTML = customerList.map(c => `<p>${c}</p>`).join('');
+    }
+}
+
 function renderProductGrid() {
     const gridTarget = document.getElementById('product-grid');
     if(!gridTarget) return;
@@ -116,9 +159,8 @@ function renderProductGrid() {
 
     collectionInventory.forEach(item => {
         const structuralCard = document.createElement('div');
-        structuralCard.className = 'product-card reveal-element';
+        structuralCard.className = 'product-card reveal-element active'; // active for immediate load
         
-        // Conditional markup append if Admin identity verification checks out
         const ownerControls = isOwnerSessionActive 
             ? `<button class="delete-piece-btn" onclick="removeGarmentPiece(${item.id})">Remove</button>` 
             : '';
@@ -126,26 +168,18 @@ function renderProductGrid() {
         structuralCard.innerHTML = `
             ${ownerControls}
             <div class="product-image-wrapper">
-                <img src="${item.image}" alt="${item.title}" class="product-image" loading="lazy">
+                <img src="${item.image}" alt="Fashion Silhouette" class="product-image" loading="lazy">
                 <div class="product-card-overlay">
                     <a href="${INSTAGRAM_TARGET_URL}" target="_blank" class="insta-transaction-trigger">Connect to Instagram to Order</a>
                 </div>
             </div>
-            <div class="product-info">
-                <h4 class="product-title">${item.title}</h4>
-                <span class="product-price">${item.price}</span>
-            </div>
         `;
         gridTarget.appendChild(structuralCard);
-        
-        // Dynamically add visibility state framework
-        setTimeout(() => structuralCard.classList.add('active'), 80);
     });
 }
 
-// Absolute Content Eraser for Owner Controls
 window.removeGarmentPiece = function(targetId) {
-    if(confirm("Confirm deletion of this garment silhouette? This will wipe it from the storefront state.")) {
+    if(confirm("Confirm deletion of this garment image?")) {
         collectionInventory = collectionInventory.filter(piece => piece.id !== targetId);
         updateLocalStorageEngine();
     }
