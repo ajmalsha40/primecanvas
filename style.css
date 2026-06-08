@@ -1,239 +1,157 @@
-:root {
-    --color-bg-deep: #0A0A0A;
-    --color-bg-panel: #141414;
-    --color-text-pure: #FFFFFF;
-    --color-text-muted: #8E8E93;
-    --color-gold-accent: #C5A880;
-    --font-editorial: 'Cormorant Garamond', serif;
-    --font-corporate: 'Inter', sans-serif;
-    --transition-cinematic: cubic-bezier(0.25, 1, 0.5, 1);
+// Global App Direct Target Link config
+const INSTAGRAM_TARGET_URL = "https://www.instagram.com/primecanva.s?igsh=MWI1ODJtZHY4dmQ3aQ==";
+
+// Mock Authentication Master Pin for Owner Management Dashboard Access
+const OWNER_SECURITY_KEY = "PRIME2026"; 
+
+// Base Mock Inventory Array to protect design structure if local state is empty
+const defaultCollection = [
+    { id: 1, title: "Minimalist Silk Column Gown", price: "$1,850 USD", image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=1983&auto=format&fit=crop" },
+    { id: 2, title: "Structured Asymmetric Blazer Dress", price: "$1,400 USD", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1920&auto=format&fit=crop" },
+    { id: 3, title: "Pleated Organza Cocktail Piece", price: "$2,100 USD", image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1974&auto=format&fit=crop" }
+];
+
+let collectionInventory = JSON.parse(localStorage.getItem('prime_canvas_inventory')) || defaultCollection;
+let isOwnerSessionActive = sessionStorage.getItem('owner_logged_in') === 'true';
+
+document.addEventListener("DOMContentLoaded", () => {
+    initAppEffects();
+    renderProductGrid();
+});
+
+// Initialization of High-End UI FX Elements
+function initAppEffects() {
+    // 1. Premium Micro-Interaction Custom Cursor Mapping
+    const cursor = document.querySelector('.custom-cursor');
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = `${e.clientX}px`;
+        cursor.style.top = `${e.clientY}px`;
+    });
+
+    // Cursor scaling expansion when navigating over interactable zones
+    document.querySelectorAll('a, button, .product-card').forEach(item => {
+        item.addEventListener('mouseenter', () => { cursor.style.transform = 'translate(-50%, -50%) scale(2.5)'; cursor.style.background = 'rgba(197, 168, 128, 0.3)'; });
+        item.addEventListener('mouseleave', () => { cursor.style.transform = 'translate(-50%, -50%) scale(1)'; cursor.style.background = '#C5A880'; });
+    });
+
+    // 2. Immersive Parallax Scroll Performance Capture
+    const parallaxBg = document.querySelector('.hero-parallax-bg');
+    window.addEventListener('scroll', () => {
+        let scrollOffset = window.pageYOffset;
+        // Adjust background pacing relative to page movement ticks
+        if(parallaxBg) {
+            parallaxBg.style.transform = `translateY(${scrollOffset * 0.4}px)`;
+        }
+    });
+
+    // 3. Intersection Observer for Cinematic Component Animations
+    const scrollRevealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal-element, .section-meta').forEach(el => {
+        el.classList.add('reveal-element');
+        scrollRevealObserver.observe(el);
+    });
+
+    // 4. Secure Admin Console UI Interface Toggles
+    const adminTrigger = document.getElementById('admin-trigger');
+    const adminPanel = document.getElementById('admin-panel');
+    const closeAdmin = document.getElementById('close-admin');
+    const logoutAdmin = document.getElementById('logout-admin');
+    const addForm = document.getElementById('add-product-form');
+
+    adminTrigger.addEventListener('click', () => {
+        if (!isOwnerSessionActive) {
+            let verificationPrompt = prompt("Provide Owner Security Validation Key:");
+            if(verificationPrompt === OWNER_SECURITY_KEY) {
+                isOwnerSessionActive = true;
+                sessionStorage.setItem('owner_logged_in', 'true');
+                renderProductGrid(); 
+                adminPanel.classList.remove('hidden');
+            } else if (verificationPrompt !== null) {
+                alert("Access Transmission Interrupted: Invalid Security Key.");
+            }
+        } else {
+            adminPanel.classList.remove('hidden');
+        }
+    });
+
+    closeAdmin.addEventListener('click', () => adminPanel.classList.add('hidden'));
+    
+    logoutAdmin.addEventListener('click', () => {
+        isOwnerSessionActive = false;
+        sessionStorage.setItem('owner_logged_in', 'false');
+        adminPanel.classList.add('hidden');
+        renderProductGrid();
+        alert("Session Protected. Owner Admin Panel Locked.");
+    });
+
+    // Append Piece Action Pipeline via Client Portal
+    addForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newPiece = {
+            id: Date.now(),
+            title: document.getElementById('item-title').value,
+            price: document.getElementById('item-price').value,
+            image: document.getElementById('item-image').value
+        };
+        collectionInventory.push(newPiece);
+        updateLocalStorageEngine();
+        addForm.reset();
+        adminPanel.classList.add('hidden');
+    });
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-html { scroll-behavior: smooth; background-color: var(--color-bg-deep); color: var(--color-text-pure); font-family: var(--font-corporate); }
+// Render Engine for Dynamic Product Architecture
+function renderProductGrid() {
+    const gridTarget = document.getElementById('product-grid');
+    if(!gridTarget) return;
 
-.custom-cursor {
-    width: 8px; height: 8px; background: var(--color-gold-accent); border-radius: 50%;
-    position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
-    transition: width 0.3s ease, height 0.3s ease;
+    gridTarget.innerHTML = '';
+
+    collectionInventory.forEach(item => {
+        const structuralCard = document.createElement('div');
+        structuralCard.className = 'product-card reveal-element';
+        
+        // Conditional markup append if Admin identity verification checks out
+        const ownerControls = isOwnerSessionActive 
+            ? `<button class="delete-piece-btn" onclick="removeGarmentPiece(${item.id})">Remove</button>` 
+            : '';
+
+        structuralCard.innerHTML = `
+            ${ownerControls}
+            <div class="product-image-wrapper">
+                <img src="${item.image}" alt="${item.title}" class="product-image" loading="lazy">
+                <div class="product-card-overlay">
+                    <a href="${INSTAGRAM_TARGET_URL}" target="_blank" class="insta-transaction-trigger">Connect to Instagram to Order</a>
+                </div>
+            </div>
+            <div class="product-info">
+                <h4 class="product-title">${item.title}</h4>
+                <span class="product-price">${item.price}</span>
+            </div>
+        `;
+        gridTarget.appendChild(structuralCard);
+        
+        // Dynamically add visibility state framework
+        setTimeout(() => structuralCard.classList.add('active'), 80);
+    });
 }
 
-.luxury-nav {
-    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-    mix-blend-mode: difference; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.nav-container { max-width: 1600px; margin: 0 auto; padding: 2rem 4rem; display: flex; justify-content: space-between; align-items: center; }
-.brand-logo { font-family: var(--font-editorial); font-size: 1.75rem; font-weight: 500; letter-spacing: 4px; color: var(--color-text-pure); text-decoration: none; }
-.nav-links { display: flex; gap: 3rem; align-items: center; }
-.nav-item { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--color-text-pure); text-decoration: none; position: relative; padding-bottom: 4px; cursor: pointer;}
-
-/* Dropdown CSS */
-.dropdown { position: relative; display: inline-block; }
-.dropdown-content {
-    display: none; position: absolute; background-color: #1a1a1a; min-width: 180px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.8); z-index: 1; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1);
-}
-.dropdown-content a {
-    color: var(--color-text-pure); padding: 12px 16px; text-decoration: none; display: block;
-    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s;
-}
-.dropdown-content a:hover { background-color: #333; color: var(--color-gold-accent); }
-.dropdown:hover .dropdown-content { display: block; }
-
-.admin-btn-toggle {
-    background: transparent; border: 1px solid rgba(255, 255, 255, 0.2); color: var(--color-text-pure);
-    padding: 0.5rem 1.25rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1.5px; cursor: pointer; transition: all 0.4s var(--transition-cinematic);
-}
-.admin-btn-toggle:hover { border-color: var(--color-gold-accent); color: var(--color-gold-accent); }
-
-/* Modal */
-.modal { position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; }
-.modal.hidden { display: none; }
-.modal-content { background-color: var(--color-bg-panel); padding: 3rem; border: 1px solid rgba(255,255,255,0.1); width: 400px; position: relative; }
-.close-modal { position: absolute; right: 20px; top: 15px; color: white; font-size: 28px; cursor: pointer; }
-.modal-title { font-family: var(--font-editorial); font-size: 2rem; font-weight: 300; margin-bottom: 2rem; text-align: center; }
-
-/* Hero Section */
-.hero-section { position: relative; height: 100vh; display: flex; align-items: center; padding-left: 8%; overflow: hidden; }
-.hero-parallax-bg {
-    position: absolute; top: 0; left: 0; width: 100%; height: 120%;
-    background-image: url('https://images.pexels.com/photos/5284982/pexels-photo-5284982.jpeg');
-    background-size: cover; background-position: center; transform: translateY(0); z-index: -2; will-change: transform;
-}
-.hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.3) 100%); z-index: -1; }
-.hero-content { max-width: 650px; }
-.hero-subtitle { font-size: 0.85rem; letter-spacing: 5px; color: var(--color-gold-accent); text-transform: uppercase; display: block; margin-bottom: 1.5rem; }
-.hero-title { font-family: var(--font-editorial); font-size: 4.5rem; font-weight: 300; line-height: 1.1; letter-spacing: -1px; margin-bottom: 2.5rem; }
-.action-scroll-btn { display: inline-block; color: var(--color-text-pure); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 3px; text-decoration: none; border-bottom: 1px solid var(--color-text-pure); padding-bottom: 8px; transition: 0.4s; }
-.action-scroll-btn:hover { color: var(--color-gold-accent); border-color: var(--color-gold-accent); }
-
-/* Products Matrix (Images Only) */
-.collection-container { max-width: 1600px; margin: 0 auto; padding: 6rem 4rem; }
-.section-meta h2 { font-family: var(--font-editorial); font-size: 2.5rem; font-weight: 300; letter-spacing: 1px; margin-bottom: 0.5rem; }
-.meta-filter { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-text-muted); margin-bottom: 3rem;}
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 4rem 3rem; }
-
-.product-card { position: relative; overflow: hidden; background: transparent; }
-.product-image-wrapper { position: relative; width: 100%; aspect-ratio: 3 / 4; overflow: hidden; background-color: #141414; }
-.product-image { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--transition-cinematic); will-change: transform; }
-.product-card:hover .product-image { transform: scale(1.04); }
-.product-card-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 10, 0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.5s var(--transition-cinematic); }
-.product-card:hover .product-card-overlay { opacity: 1; }
-.insta-transaction-trigger { background: var(--color-text-pure); color: var(--color-bg-deep); border: none; padding: 1rem 2rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; text-decoration: none; transform: translateY(15px); transition: all 0.5s var(--transition-cinematic); }
-.product-card:hover .insta-transaction-trigger { transform: translateY(0); }
-.insta-transaction-trigger:hover { background: var(--color-gold-accent); color: var(--color-text-pure); }
-
-.delete-piece-btn { position: absolute; top: 15px; right: 15px; background: rgba(200, 30, 30, 0.9); color: white; border: none; padding: 0.5rem 0.75rem; cursor: pointer; z-index: 10; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
-
-/* Admin Panel */
-.admin-panel { position: fixed; top: 0; right: 0; width: 500px; height: 100vh; background-color: var(--color-bg-panel); box-shadow: -10px 0 30px rgba(0,0,0,0.5); z-index: 2000; padding: 3rem; transition: transform 0.6s var(--transition-cinematic); overflow-y: auto; }
-.admin-panel.hidden { transform: translateX(100%); }
-.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #333; padding-bottom: 1rem;}
-.panel-header h3 { font-family: var(--font-editorial); font-size: 2rem; font-weight: 300; }
-.close-btn { background: none; border: none; color: var(--color-text-pure); font-size: 2rem; cursor: pointer; }
-
-.admin-section { margin-bottom: 2.5rem; }
-.admin-section h4 { font-size: 1rem; color: var(--color-gold-accent); margin-bottom: 1rem; font-weight: 400; text-transform: uppercase; letter-spacing: 1px;}
-.customer-list-box { background: #0a0a0a; border: 1px solid #333; padding: 1rem; max-height: 150px; overflow-y: auto; font-size: 0.85rem; line-height: 1.6; }
-
-.input-group { margin-bottom: 1.5rem; }
-.input-group label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-text-muted); margin-bottom: 0.5rem; }
-.input-group input { width: 100%; background: transparent; border: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 0.75rem 0; color: var(--color-text-pure); font-size: 0.95rem; outline: none; transition: 0.4s; }
-.input-group input:focus { border-color: var(--color-gold-accent); }
-.submit-luxury-btn { width: 100%; background-color: transparent; border: 1px solid var(--color-gold-accent); color: var(--color-gold-accent); padding: 1rem; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; cursor: pointer; transition: 0.4s; }
-.submit-luxury-btn:hover { background-color: var(--color-gold-accent); color: var(--color-bg-deep); }
-.logout-btn { background: transparent; border: none; color: #FF453A; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin-top: 1rem; }
-
-.reveal-element { opacity: 0; transform: translateY(40px); transition: opacity 1.2s var(--transition-cinematic), transform 1.2s var(--transition-cinematic); }
-.reveal-element.active { opacity: 1; transform: translateY(0); }
-
-/* Footer */
-.luxury-footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 6rem 4rem 3rem 4rem; background-color: #050505; text-align: center; }
-.instagram-footer-trigger { display: inline-flex; align-items: center; gap: 1rem; color: var(--color-text-pure); font-family: var(--font-editorial); font-size: 2.2rem; text-decoration: none; font-weight: 300; transition: color 0.4s ease; margin-bottom: 4rem; }
-.instagram-footer-trigger:hover { color: var(--color-gold-accent); }
-.arrow-icon { width: 32px; height: 32px; transition: transform 0.4s; }
-.instagram-footer-trigger:hover .arrow-icon { transform: translateX(10px); }
-.footer-base { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.2); }
-/* =======================================================
-   MOBILE & TABLET RESPONSIVE STYLES 
-   (നിങ്ങളുടെ style.css ഫയലിന്റെ ഏറ്റവും ഒടുവിൽ ഇത് പേസ്റ്റ് ചെയ്യുക)
-   ======================================================= */
-
-@media (max-width: 1024px) {
-    .nav-container {
-        padding: 1.5rem 2rem;
-    }
-    .nav-links {
-        gap: 1.5rem;
+// Absolute Content Eraser for Owner Controls
+window.removeGarmentPiece = function(targetId) {
+    if(confirm("Confirm deletion of this garment silhouette? This will wipe it from the storefront state.")) {
+        collectionInventory = collectionInventory.filter(piece => piece.id !== targetId);
+        updateLocalStorageEngine();
     }
 }
 
-@media (max-width: 768px) {
-    /* മൊബൈലിൽ മൗസ് പോയിന്റർ ഇല്ലാത്തതിനാൽ കസ്റ്റം കർസർ ഒഴിവാക്കുന്നു */
-    .custom-cursor {
-        display: none !important;
-    }
-
-    /* ഹെഡർ മെനു ക്രമീകരണങ്ങൾ */
-    .nav-container {
-        padding: 1rem 1.5rem;
-        flex-direction: column;
-        gap: 1rem;
-    }
-    .nav-links {
-        gap: 1.2rem;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .brand-logo {
-        font-size: 1.4rem;
-        letter-spacing: 2px;
-    }
-    .nav-item {
-        font-size: 0.75rem;
-        letter-spacing: 1px;
-    }
-    .dropdown-content {
-        position: fixed;
-        left: 50%;
-        transform: translateX(-50%);
-        min-width: 200px;
-    }
-
-    /* ഹീറോ സെക്ഷൻ മൊബൈൽ സൈസ് */
-    .hero-section {
-        padding-left: 5%;
-        padding-right: 5%;
-        justify-content: center;
-        text-align: center;
-    }
-    .hero-content {
-        max-width: 100%;
-    }
-    .hero-title {
-        font-size: 2.3rem; /* മൊബൈലിന് അനുയോജ്യമായ സൈസ് */
-        line-height: 1.2;
-        margin-bottom: 1.8rem;
-    }
-    .hero-subtitle {
-        font-size: 0.7rem;
-        letter-spacing: 3px;
-    }
-
-    /* പ്രൊഡക്റ്റ് ഗ്രിഡ് മൊബൈൽ ക്രമീകരണം (ഇമേജുകൾ കൃത്യമായി കാണിക്കും) */
-    .collection-container {
-        padding: 4rem 1.5rem;
-    }
-    .section-meta h2 {
-        font-size: 1.8rem;
-        text-align: center;
-    }
-    .meta-filter {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    .product-grid {
-        /* മൊബൈൽ ഫോണിൽ ഇമേജുകൾ സ്ക്രീൻ വിട്ട് പുറത്തുപോകാതിരിക്കാൻ ഇത് സഹായിക്കും */
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
-        gap: 2.5rem 1.5rem;
-    }
-    .insta-transaction-trigger {
-        padding: 0.8rem 1.5rem;
-        font-size: 0.7rem;
-        width: 90%;
-        text-align: center;
-    }
-
-    /* ലോഗിൻ ബോക്സ് മൊബൈൽ സൈസ് */
-    .modal-content {
-        width: 90%;
-        padding: 2rem 1.5rem;
-    }
-    .modal-title {
-        font-size: 1.6rem;
-    }
-
-    /* അഡ്മിൻ പാനൽ മൊബൈൽ സൈസ് */
-    .admin-panel {
-        width: 100%; /* മൊബൈലിൽ ഫുൾ സ്ക്രീൻ ആയി കാണിക്കും */
-        padding: 2rem 1.5rem;
-    }
-    .panel-header h3 {
-        font-size: 1.5rem;
-    }
-
-    /* ഫൂട്ടർ ക്രമീകരണങ്ങൾ */
-    .luxury-footer {
-        padding: 4rem 1.5rem 2rem 1.5rem;
-    }
-    .instagram-footer-trigger {
-        font-size: 1.3rem;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    .arrow-icon {
-        width: 24px;
-        height: 24px;
-    }
+function updateLocalStorageEngine() {
+    localStorage.setItem('prime_canvas_inventory', JSON.stringify(collectionInventory));
+    renderProductGrid();
 }
